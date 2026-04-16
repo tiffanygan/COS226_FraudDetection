@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.StdOut;
 
 public class BoostingAlgorithm {
 
@@ -22,5 +23,39 @@ public class BoostingAlgorithm {
 
     // unit testing
     public static void main(String[] args) {
+        DataSet training = new DataSet(args[0]);
+        DataSet testing = new DataSet(args[1]);
+        int k = Integer.parseInt(args[2]);
+        int T = Integer.parseInt(args[3]);
+
+        int[][] trainingInput = training.getInput();
+        int[][] testingInput = testing.getInput();
+        int[] trainingLabels = training.getLabels();
+        int[] testingLabels = testing.getLabels();
+        Point2D[] trainingLocations = training.getLocations();
+
+        // train the model
+        BoostingAlgorithm model = new BoostingAlgorithm(
+                trainingInput, trainingLabels, trainingLocations, k
+        );
+        for (int t = 0; t < T; t++)
+            model.iterate();
+
+        // calculate the training data set accuracy
+        double trainingAccuracy = 0;
+        for (int i = 0; i < training.getN(); i++)
+            if (model.predict(trainingInput[i]) == trainingLabels[i])
+                trainingAccuracy += 1;
+        trainingAccuracy /= training.getN();
+
+        // calculate the test data set accuracy
+        double testingAccuracy = 0;
+        for (int i = 0; i < testing.getN(); i++)
+            if (model.predict(testingInput[i]) == testingLabels[i])
+                testingAccuracy += 1;
+        testingAccuracy /= testing.getN();
+
+        StdOut.println("Training accuracy of model: " + trainingAccuracy);
+        StdOut.println("Test accuracy of model: " + testingAccuracy);
     }
 }
