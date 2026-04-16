@@ -1,0 +1,26 @@
+Programming Assignment 7: Fraud Detection
+
+
+Answer these questions after you implement your solution.
+
+
+/* *****************************************************************************
+ * What is your assessment of the assignment? Was it helpful? Was it fun?
+ * Give it a grade from 1 (bad) to 5 (good)
+ **************************************************************************** */
+
+
+
+/* *****************************************************************************
+ * How did you use AI to complete this assignment? Remember that AI isn't
+ * banned, it's only discouraged, so we won't penalize you in any way for
+ * any kind of AI usage.
+ **************************************************************************** */
+
+
+
+/* *****************************************************************************
+ *  List any other comments here. Feel free to provide any feedback   
+ *  on how much you learned from doing the assignment, and whether    
+ *  you enjoyed doing it.                                             
+ **************************************************************************** */
