@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.CC;
 import edu.princeton.cs.algs4.Edge;
 import edu.princeton.cs.algs4.EdgeWeightedGraph;
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.KruskalMST;
 import edu.princeton.cs.algs4.Point2D;
 
@@ -79,5 +80,26 @@ public class Clustering {
 
     // unit testing (optional)
     public static void main(String[] args) {
+        String fileName = args[0];
+        In file = new In(fileName);
+        int m = Integer.parseInt(file.readLine());
+        Point2D[] locations = new Point2D[m];
+        String[] currCoord = new String[2];
+        int idx = 0;
+        String curr;
+        while (file.hasNextLine()) {
+            curr = file.readLine();
+            currCoord = curr.split(" ");
+            Point2D currPoint = new Point2D(Double.parseDouble(currCoord[0]),
+                                            Double.parseDouble(currCoord[1]));
+            locations[idx] = currPoint;
+            idx++;
+        }
+        Clustering clustering = new Clustering(locations, 5);
+        int[] weights = { 5, 6, 7, 0, 6, 7, 5, 6, 7, 0, 6, 7, 0, 6, 7, 0, 6, 7, 0, 6, 7 };
+        int[] clusters = clustering.reduceDimensions(weights);
+        for (int c : clusters) {
+            System.out.println(c);
+        }
     }
 }
