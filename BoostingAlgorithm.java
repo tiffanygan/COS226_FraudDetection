@@ -2,13 +2,63 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.StdOut;
 
 public class BoostingAlgorithm {
+    // number of locations
+    private int dim;
 
     // create the clusters and initialize your data structures
     public BoostingAlgorithm(int[][] input, int[] labels, Point2D[] locations, int k) {
+        validateBoost(input, labels, locations, k);
+        dim = input.length;
+    }
+
+    // validate constructor parameters
+    private void validateBoost(int[][] input, int[] labels, Point2D[] locations, int k) {
+        // make sure none of the inputs are null
+        if (input == null) {
+            throw new IllegalArgumentException("input array is null");
+        }
+        if (locations == null) {
+            throw new IllegalArgumentException("weights array is null");
+        }
+        if (labels == null) {
+            throw new IllegalArgumentException("labels array is null");
+        }
+        // length of input can't be 0
+        if (input.length == 0) {
+            throw new IllegalArgumentException("length of input cannot be 0");
+        }
+        // no element in input can have length 0
+        for (int i = 0; i < input.length; i++) {
+            if (input[i].length == 0) {
+                throw new IllegalArgumentException("length of input arrays cannot be 0");
+            }
+        }
+        // k has to be in the range [1, m]
+        // inputs is n by m
+        if (k < 1 || k > input[0].length) {
+            throw new IllegalArgumentException("k is out of range");
+        }
+        // for an n by k input, the weights array is of length n
+        if (locations.length != input.length) {
+            throw new IllegalArgumentException("length of weights and input do not match");
+        }
+        // for an n by k input, the labels array is of length n
+        if (labels.length != input.length) {
+            throw new IllegalArgumentException("length of labels and input do not match");
+        }
+        // value of labels are 0 or 1
+        for (int i = 0; i < labels.length; i++) {
+            if (!(labels[i] == 0 || labels[i] == 1)) {
+                throw new IllegalArgumentException("label must be either 1 or 0");
+            }
+        }
     }
 
     // return the current weight of the ith point
     public double weightOf(int i) {
+        if (i < 0 || i > dim - 1) {
+            throw new IllegalArgumentException("i needs to be from 0 to " + (dim - 1));
+        }
         return 0.0;
     }
 
@@ -18,6 +68,12 @@ public class BoostingAlgorithm {
 
     // return the prediction of the learner for a new sample
     public int predict(int[] sample) {
+        if (sample == null) {
+            throw new IllegalArgumentException("sample is null");
+        }
+        if (sample.length != dim) {
+            throw new IllegalArgumentException("length of sample array needs to equal " + dim);
+        }
         return -1;
     }
 
