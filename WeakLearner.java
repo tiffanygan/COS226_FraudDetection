@@ -1,4 +1,6 @@
 public class WeakLearner {
+    // number of locations
+    private int dim;
     // dimension predictor
     private int dimPredict;
     // value predictor
@@ -9,6 +11,7 @@ public class WeakLearner {
     // train the weak learner
     public WeakLearner(int[][] input, double[] weights, int[] labels) {
         validateWeakLearner(input, weights, labels);
+        dim = input.length;
     }
 
     // validate constructor parameters
@@ -58,7 +61,10 @@ public class WeakLearner {
     // return the prediction of the learner for a new sample
     public int predict(int[] sample) {
         if (sample == null) {
-            throw new RuntimeException("sample is null");
+            throw new IllegalArgumentException("sample is null");
+        }
+        if (sample.length != dim) {
+            throw new IllegalArgumentException("length of sample array needs to equal " + dim);
         }
         return -1;
     }
