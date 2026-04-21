@@ -1,6 +1,6 @@
 public class WeakLearner {
     // number of locations
-    private int dim;
+    private int k;
     // dimension predictor
     // indicates the j in input[i][j]
     private int dimPredict;
@@ -14,54 +14,59 @@ public class WeakLearner {
     // train the weak learner
     public WeakLearner(int[][] input, double[] weights, int[] labels) {
         validateWeakLearner(input, weights, labels);
-        dim = input.length;
-        int k = input[0].length;
-        int[] values = new int[dim];
+        int n = input.length;
+        k = input[0].length;
+        int[] values = new int[n];
         int index = 0;
-        int weight0 = 0;
-        int weight1 = 0;
-        int maxWeight = Integer.MIN_VALUE;
+        double weight0 = 0;
+        double weight1 = 0;
+        double maxWeight = Double.NEGATIVE_INFINITY;
         // i dictates Dp (which coordinate we look at)
         for (int i = 0; i < k; i++) {
+            index = 0;
             // go through and collect all the points we are looking at
-            for (int j = 0; j < dim; j++) {
+            for (int j = 0; j < n; j++) {
                 values[index] = input[j][i];
                 index++;
             }
             // m dictates Vp (partition value)
-            for (int m = 0; m < dim; m++) {
-                for (int w = 0; w < dim; w++) {
-                    if (values[w] <= m) {
+            for (int m = 0; m < n; m++) {
+                for (int w = 0; w < n; w++) {
+                    if (values[w] <= values[m]) {
                         // if Sp = 0
-                        if (weights[w] == 0) {
+                        if (labels[w] == 0) {
                             weight0 += weights[w];
                         }
                         // if Sp = 1
-                        if (weights[w] == 1) {
-                            weight0 += weights[w];
+                        if (labels[w] == 1) {
+                            weight1 += weights[w];
                         }
                     }
                     else {
                         // if Sp = 0
-                        if (weights[w] == 1) {
+                        if (labels[w] == 1) {
                             weight0 += weights[w];
                         }
                         // if Sp = 1
-                        if (weights[w] == 0) {
+                        if (labels[w] == 0) {
                             weight1 += weights[w];
                         }
                     }
                 }
                 if (weight0 > maxWeight) {
                     dimPredict = i;
-                    valPredict = m;
+                    valPredict = values[m];
                     signPredict = 0;
+                    maxWeight = weight0;
                 }
                 if (weight1 > maxWeight) {
                     dimPredict = i;
-                    valPredict = m;
+                    valPredict = values[m];
                     signPredict = 1;
+                    maxWeight = weight1;
                 }
+                weight0 = 0;
+                weight1 = 0;
             }
         }
     }
@@ -94,7 +99,7 @@ public class WeakLearner {
         }
         // non-negative weights
         for (int i = 0; i < weights.length; i++) {
-            if (weights[i] <= 0) {
+            if (weights[i] < 0) {
                 throw new IllegalArgumentException("weights need to be non-negative");
             }
         }
@@ -115,8 +120,8 @@ public class WeakLearner {
         if (sample == null) {
             throw new IllegalArgumentException("sample is null");
         }
-        if (sample.length != dim) {
-            throw new IllegalArgumentException("length of sample array needs to equal " + dim);
+        if (sample.length != k) {
+            throw new IllegalArgumentException("length of sample array needs to equal " + k);
         }
         if (signPredict == 0) {
             if (sample[dimPredict] <= valPredict) {
