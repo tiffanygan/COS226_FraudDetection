@@ -2,16 +2,68 @@ public class WeakLearner {
     // number of locations
     private int dim;
     // dimension predictor
+    // indicates the j in input[i][j]
     private int dimPredict;
     // value predictor
+    // indicates which value to split at
     private int valPredict;
     // sign predictor
+    // indicates which side to split in
     private int signPredict;
 
     // train the weak learner
     public WeakLearner(int[][] input, double[] weights, int[] labels) {
         validateWeakLearner(input, weights, labels);
         dim = input.length;
+        int k = input[0].length;
+        int[] values = new int[dim];
+        int index = 0;
+        int weight0 = 0;
+        int weight1 = 0;
+        int maxWeight = Integer.MIN_VALUE;
+        // i dictates Dp (which coordinate we look at)
+        for (int i = 0; i < k; i++) {
+            // go through and collect all the points we are looking at
+            for (int j = 0; j < dim; j++) {
+                values[index] = input[j][i];
+                index++;
+            }
+            // m dictates Vp (partition value)
+            for (int m = 0; m < dim; m++) {
+                for (int w = 0; w < dim; w++) {
+                    if (values[w] <= m) {
+                        // if Sp = 0
+                        if (weights[w] == 0) {
+                            weight0 += weights[w];
+                        }
+                        // if Sp = 1
+                        if (weights[w] == 1) {
+                            weight0 += weights[w];
+                        }
+                    }
+                    else {
+                        // if Sp = 0
+                        if (weights[w] == 1) {
+                            weight0 += weights[w];
+                        }
+                        // if Sp = 1
+                        if (weights[w] == 0) {
+                            weight1 += weights[w];
+                        }
+                    }
+                }
+                if (weight0 > maxWeight) {
+                    dimPredict = i;
+                    valPredict = m;
+                    signPredict = 0;
+                }
+                if (weight1 > maxWeight) {
+                    dimPredict = i;
+                    valPredict = m;
+                    signPredict = 1;
+                }
+            }
+        }
     }
 
     // validate constructor parameters
@@ -66,7 +118,23 @@ public class WeakLearner {
         if (sample.length != dim) {
             throw new IllegalArgumentException("length of sample array needs to equal " + dim);
         }
-        return -1;
+        if (signPredict == 0) {
+            if (sample[dimPredict] <= valPredict) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+        if (signPredict == 1) {
+            if (sample[dimPredict] <= valPredict) {
+                return 0;
+            }
+            else {
+                return 1;
+            }
+        }
+        return 0;
     }
 
     // return the dimension the learner uses to separate the data
