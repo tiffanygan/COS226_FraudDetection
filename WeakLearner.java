@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+
 public class WeakLearner {
     // number of locations
     private int k;
@@ -18,55 +21,89 @@ public class WeakLearner {
         k = input[0].length;
         int[] values = new int[n];
         int index = 0;
-        double weight0 = 0;
-        double weight1 = 0;
+        double weightLeft = 0;
+        double weightRight = 0;
         double maxWeight = Double.NEGATIVE_INFINITY;
         // i dictates Dp (which coordinate we look at)
         for (int i = 0; i < k; i++) {
             index = 0;
+            weightLeft = 0;
+            weightRight = 0;
             // go through and collect all the points we are looking at
             for (int j = 0; j < n; j++) {
                 values[index] = input[j][i];
                 index++;
             }
+            // have an arraylist of associated weights and labels
+            ArrayList<double[]> combinations = new ArrayList<double[]>();
+            for (int h = 0; h < n; h++) {
+                double[] curr = new double[] { values[h], weights[h], labels[h] };
+                combinations.add(curr);
+            }
+            // sort the ArrayList by the values
+            // nlogn
+            combinations.sort(new FirstElementOrder());
+            // test Sp = 0
+            // predict 1 for everything above the line
+            for (int l = 0; l < n; l++) {
+                if (combinations.get(l)[2] == 1) {
+                    weightRight += combinations.get(l)[1];
+                }
+            }
+            if ((weightLeft + weightRight) > maxWeight) {
+                dimPredict = i;
+                valPredict = (int) combinations.get(0)[0];
+                signPredict = 0;
+                maxWeight = weightLeft + weightRight;
+            }
             // m dictates Vp (partition value)
             for (int m = 0; m < n; m++) {
-                for (int w = 0; w < n; w++) {
-                    if (values[w] <= values[m]) {
-                        // if Sp = 0
-                        if (labels[w] == 0) {
-                            weight0 += weights[w];
-                        }
-                        // if Sp = 1
-                        if (labels[w] == 1) {
-                            weight1 += weights[w];
-                        }
-                    }
-                    else {
-                        // if Sp = 0
-                        if (labels[w] == 1) {
-                            weight0 += weights[w];
-                        }
-                        // if Sp = 1
-                        if (labels[w] == 0) {
-                            weight1 += weights[w];
-                        }
-                    }
+                // predict 0 for below or on the line
+                if (combinations.get(m)[2] == 0) {
+                    weightLeft += combinations.get(m)[1];
                 }
-                if (weight0 > maxWeight) {
+                // predict 1 for above the line
+                if (combinations.get(m)[2] == 1) {
+                    weightRight -= combinations.get(m)[1];
+                }
+                if ((weightLeft + weightRight) > maxWeight) {
                     dimPredict = i;
-                    valPredict = values[m];
+                    valPredict = (int) combinations.get(m)[0];
                     signPredict = 0;
-                    maxWeight = weight0;
+                    maxWeight = weightLeft + weightRight;
                 }
-                if (weight1 > maxWeight) {
+            }
+            weightLeft = 0;
+            weightRight = 0;
+            // test Sp = 1
+            // predict 0 for everything above the line
+            for (int l = 0; l < n; l++) {
+                if (combinations.get(l)[2] == 0) {
+                    weightRight += combinations.get(l)[1];
+                }
+            }
+            if ((weightLeft + weightRight) > maxWeight) {
+                dimPredict = i;
+                valPredict = (int) combinations.get(0)[0];
+                signPredict = 1;
+                maxWeight = weightLeft + weightRight;
+            }
+            // m dictates Vp (partition value)
+            for (int m = 0; m < n; m++) {
+                // predict 1 for below or on the line
+                if (combinations.get(m)[2] == 1) {
+                    weightLeft += combinations.get(m)[1];
+                }
+                // predict 0 for above the line
+                if (combinations.get(m)[2] == 0) {
+                    weightRight -= combinations.get(m)[1];
+                }
+                if ((weightLeft + weightRight) > maxWeight) {
                     dimPredict = i;
-                    valPredict = values[m];
+                    valPredict = (int) combinations.get(m)[0];
                     signPredict = 1;
-                    maxWeight = weight1;
+                    maxWeight = weightLeft + weightRight;
                 }
-                weight0 = 0;
-                weight1 = 0;
             }
         }
     }
@@ -115,6 +152,18 @@ public class WeakLearner {
         }
     }
 
+    private static class FirstElementOrder implements Comparator<double[]> {
+        public int compare(double[] a, double[] b) {
+            if (a[0] > b[0]) {
+                return 1;
+            }
+            else if (a[0] < b[0]) {
+                return -1;
+            }
+            return 0;
+        }
+    }
+
     // return the prediction of the learner for a new sample
     public int predict(int[] sample) {
         if (sample == null) {
@@ -123,7 +172,7 @@ public class WeakLearner {
         if (sample.length != k) {
             throw new IllegalArgumentException("length of sample array needs to equal " + k);
         }
-        if (signPredict == 0) {
+        if (signPredict == 1) {
             if (sample[dimPredict] <= valPredict) {
                 return 1;
             }
@@ -131,7 +180,7 @@ public class WeakLearner {
                 return 0;
             }
         }
-        if (signPredict == 1) {
+        if (signPredict == 0) {
             if (sample[dimPredict] <= valPredict) {
                 return 0;
             }
