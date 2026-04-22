@@ -27,6 +27,7 @@ public class WeakLearner {
         // i dictates Dp (which coordinate we look at)
         for (int i = 0; i < k; i++) {
             index = 0;
+            // reset the weights
             weightLeft = 0;
             weightRight = 0;
             // go through and collect all the points we are looking at
