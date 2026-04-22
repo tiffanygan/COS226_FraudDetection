@@ -21,15 +21,19 @@ public class WeakLearner {
         k = input[0].length;
         int[] values = new int[n];
         int index = 0;
-        double weightLeft = 0;
-        double weightRight = 0;
+        double weightLeft0 = 0;
+        double weightRight0 = 0;
+        double weightLeft1 = 0;
+        double weightRight1 = 0;
         double maxWeight = Double.NEGATIVE_INFINITY;
         // i dictates Dp (which coordinate we look at)
         for (int i = 0; i < k; i++) {
             index = 0;
             // reset the weights
-            weightLeft = 0;
-            weightRight = 0;
+            weightLeft0 = 0;
+            weightRight0 = 0;
+            weightLeft1 = 0;
+            weightRight1 = 0;
             // go through and collect all the points we are looking at
             for (int j = 0; j < n; j++) {
                 values[index] = input[j][i];
@@ -44,66 +48,63 @@ public class WeakLearner {
             // sort the ArrayList by the values
             // nlogn
             combinations.sort(new FirstElementOrder());
-            // test Sp = 0
-            // predict 1 for everything above the line
             for (int l = 0; l < n; l++) {
                 if (combinations.get(l)[2] == 1) {
-                    weightRight += combinations.get(l)[1];
+                    // test Sp = 0
+                    // predict 1 for everything above the line
+                    weightRight0 += combinations.get(l)[1];
+                }
+                if (combinations.get(l)[2] == 0) {
+                    // test Sp = 1
+                    // predict 0 for everything above the line
+                    weightRight1 += combinations.get(l)[1];
                 }
             }
-            if ((weightLeft + weightRight) > maxWeight) {
+            if ((weightLeft0 + weightRight0) > maxWeight) {
                 dimPredict = i;
                 valPredict = (int) combinations.get(0)[0];
                 signPredict = 0;
-                maxWeight = weightLeft + weightRight;
+                maxWeight = weightLeft0 + weightRight0;
             }
-            // m dictates Vp (partition value)
-            for (int m = 0; m < n; m++) {
-                // predict 0 for below or on the line
-                if (combinations.get(m)[2] == 0) {
-                    weightLeft += combinations.get(m)[1];
-                }
-                // predict 1 for above the line
-                if (combinations.get(m)[2] == 1) {
-                    weightRight -= combinations.get(m)[1];
-                }
-                if ((weightLeft + weightRight) > maxWeight) {
-                    dimPredict = i;
-                    valPredict = (int) combinations.get(m)[0];
-                    signPredict = 0;
-                    maxWeight = weightLeft + weightRight;
-                }
-            }
-            weightLeft = 0;
-            weightRight = 0;
-            // test Sp = 1
-            // predict 0 for everything above the line
-            for (int l = 0; l < n; l++) {
-                if (combinations.get(l)[2] == 0) {
-                    weightRight += combinations.get(l)[1];
-                }
-            }
-            if ((weightLeft + weightRight) > maxWeight) {
+            if ((weightLeft1 + weightRight1) > maxWeight) {
                 dimPredict = i;
                 valPredict = (int) combinations.get(0)[0];
                 signPredict = 1;
-                maxWeight = weightLeft + weightRight;
+                maxWeight = weightLeft1 + weightRight1;
             }
             // m dictates Vp (partition value)
             for (int m = 0; m < n; m++) {
-                // predict 1 for below or on the line
-                if (combinations.get(m)[2] == 1) {
-                    weightLeft += combinations.get(m)[1];
-                }
-                // predict 0 for above the line
                 if (combinations.get(m)[2] == 0) {
-                    weightRight -= combinations.get(m)[1];
+                    // Sp = 0
+                    // predict 0 for below or on the line
+                    weightLeft0 += combinations.get(m)[1];
+                    // Sp = 1
+                    // predict 1 for below or on the line
+                    weightRight1 -= combinations.get(m)[1];
                 }
-                if ((weightLeft + weightRight) > maxWeight) {
+                if (combinations.get(m)[2] == 1) {
+                    // Sp = 0
+                    // predict 1 for above the line
+                    weightRight0 -= combinations.get(m)[1];
+                    // Sp = 1
+                    // predict 0 for above the line
+                    weightLeft1 += combinations.get(m)[1];
+                }
+                // if the coordinate value is the same, skip to the end
+                if (m < n - 1 && (combinations.get(m)[0] == combinations.get(m + 1)[0])) {
+                    continue;
+                }
+                if ((weightLeft0 + weightRight0) > maxWeight) {
+                    dimPredict = i;
+                    valPredict = (int) combinations.get(m)[0];
+                    signPredict = 0;
+                    maxWeight = weightLeft0 + weightRight0;
+                }
+                if ((weightLeft1 + weightRight1) > maxWeight) {
                     dimPredict = i;
                     valPredict = (int) combinations.get(m)[0];
                     signPredict = 1;
-                    maxWeight = weightLeft + weightRight;
+                    maxWeight = weightLeft1 + weightRight1;
                 }
             }
         }
