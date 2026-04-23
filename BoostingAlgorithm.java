@@ -4,51 +4,76 @@ import edu.princeton.cs.algs4.StdOut;
 public class BoostingAlgorithm {
     // number of locations
     private int dim;
+    // weights
+    private double[] weights;
+    // sum of weights (should be 1 after normalization)
+    private double weightsSum = 1;
+    // inputs
+    private int[][] input;
+    // labels
+    private int[] labels;
+    // number of iterations so far
+    private int numIterations;
+    // Clustering object
+    private Clustering clustering;
+    // WeakLearner object
+    private WeakLearner weakLearner;
 
     // create the clusters and initialize your data structures
     public BoostingAlgorithm(int[][] input, int[] labels, Point2D[] locations, int k) {
         validateBoost(input, labels, locations, k);
         dim = input.length;
+        this.input = input;
+        this.labels = labels;
+        numIterations = 0;
+        // initialize all weights to 1/n
+        weights = new double[dim];
+        for (int i = 0; i < dim; i++) weights[i] = (double) 1 / dim;
+        clustering = new Clustering(locations, k);
     }
 
     // validate constructor parameters
-    private void validateBoost(int[][] input, int[] labels, Point2D[] locations, int k) {
+    private void validateBoost(
+            int[][] inputs, int[] label, Point2D[] locations, int k) {
         // make sure none of the inputs are null
-        if (input == null) {
+        if (inputs == null) {
             throw new IllegalArgumentException("input array is null");
         }
         if (locations == null) {
             throw new IllegalArgumentException("weights array is null");
         }
-        if (labels == null) {
+        if (label == null) {
             throw new IllegalArgumentException("labels array is null");
         }
         // length of input can't be 0
-        if (input.length == 0) {
+        if (inputs.length == 0) {
             throw new IllegalArgumentException("length of input cannot be 0");
         }
         // no element in input can have length 0
-        for (int i = 0; i < input.length; i++) {
-            if (input[i].length == 0) {
-                throw new IllegalArgumentException("length of input arrays cannot be 0");
+        for (int i = 0; i < inputs.length; i++) {
+            if (inputs[i].length == 0) {
+                throw new IllegalArgumentException(
+                        "length of input arrays cannot be 0");
             }
         }
         // k has to be in the range [1, m]
         // inputs is n by m
-        if (k < 1 || k > input[0].length) {
+        if (k < 1 || k > inputs[0].length) {
             throw new IllegalArgumentException("k is out of range");
         }
         // for an n by k input, the weights array is of length n
-        if (locations.length != input.length) {
-            throw new IllegalArgumentException("length of weights and input do not match");
+        if (locations.length != inputs.length) {
+            throw new IllegalArgumentException(
+                    "length of weights and input do not match");
         }
         // for an n by k input, the labels array is of length n
-        if (labels.length != input.length) {
-            throw new IllegalArgumentException("length of labels and input do not match");
+        if (label.length != inputs.length) {
+            throw new IllegalArgumentException(
+                    "length of labels and input do not match");
         }
         // value of labels are 0 or 1
-        for (int i = 0; i < labels.length; i++) {
-            if (!(labels[i] == 0 || labels[i] == 1)) {
+        for (int i = 0; i < label.length; i++) {
+            if (!(label[i] == 0 || label[i] == 1)) {
                 throw new IllegalArgumentException("label must be either 1 or 0");
             }
         }
@@ -59,11 +84,23 @@ public class BoostingAlgorithm {
         if (i < 0 || i > dim - 1) {
             throw new IllegalArgumentException("i needs to be from 0 to " + (dim - 1));
         }
-        return 0.0;
+        return weights[i];
     }
 
     // apply one step of the boosting algorithm
     public void iterate() {
+        numIterations++;
+        // create weak learner
+        weakLearner = new WeakLearner(input, weights, labels);
+        // double weights of mislabeled inputs
+        for (int i = 0; i < dim; i++) {
+            // TO DO
+        }
+        // renormalize
+        for (int i = 0; i < dim; i++) {
+            weights[i] /= weightsSum;
+        }
+        weightsSum = 1;
     }
 
     // return the prediction of the learner for a new sample
@@ -72,8 +109,19 @@ public class BoostingAlgorithm {
             throw new IllegalArgumentException("sample is null");
         }
         if (sample.length != dim) {
-            throw new IllegalArgumentException("length of sample array needs to equal " + dim);
+            throw new IllegalArgumentException(
+                    "length of sample array needs to equal " + dim);
         }
+
+        // call Clustering.reduceDimensions() once
+        clustering.reduceDimensions(sample);
+        // call WeakLearner.predict() numIterations times
+        for (int i = 0; i < numIterations; i++) {
+            weakLearner.predict(sample);
+        }
+
+        // return majority-vote prediction
+        // TO DO
         return -1;
     }
 

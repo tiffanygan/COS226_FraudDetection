@@ -5,7 +5,7 @@ public class WeakLearner {
     // number of locations
     private int k;
     // dimension predictor
-    // indicates the j in input[i][j]
+    // indicates the i/j in input[i][j]
     private int dimPredict;
     // value predictor
     // indicates which value to split at
@@ -20,11 +20,11 @@ public class WeakLearner {
         int n = input.length;
         k = input[0].length;
         int[] values = new int[n];
-        int index = 0;
-        double weightLeft0 = 0;
-        double weightRight0 = 0;
-        double weightLeft1 = 0;
-        double weightRight1 = 0;
+        int index;
+        double weightLeft0;
+        double weightRight0;
+        double weightLeft1;
+        double weightRight1;
         double maxWeight = Double.NEGATIVE_INFINITY;
         // i dictates Dp (which coordinate we look at)
         for (int i = 0; i < k; i++) {
@@ -91,7 +91,8 @@ public class WeakLearner {
                     weightLeft1 += combinations.get(m)[1];
                 }
                 // if the coordinate value is the same, skip to the end
-                if (m < n - 1 && (combinations.get(m)[0] == combinations.get(m + 1)[0])) {
+                if (m < n - 1 &&
+                        (combinations.get(m)[0] == combinations.get(m + 1)[0])) {
                     continue;
                 }
                 if ((weightLeft0 + weightRight0) > maxWeight) {
@@ -129,12 +130,14 @@ public class WeakLearner {
         // no element in input can have length 0
         for (int i = 0; i < input.length; i++) {
             if (input[i].length == 0) {
-                throw new IllegalArgumentException("length of input arrays cannot be 0");
+                throw new IllegalArgumentException(
+                        "length of input arrays cannot be 0");
             }
         }
         // for an n by k input, the weights array is of length n
         if (weights.length != input.length) {
-            throw new IllegalArgumentException("length of weights and input do not match");
+            throw new IllegalArgumentException(
+                    "length of weights and input do not match");
         }
         // non-negative weights
         for (int i = 0; i < weights.length; i++) {
@@ -144,7 +147,8 @@ public class WeakLearner {
         }
         // for an n by k input, the labels array is of length n
         if (labels.length != input.length) {
-            throw new IllegalArgumentException("length of labels and input do not match");
+            throw new IllegalArgumentException(
+                    "length of labels and input do not match");
         }
         // value of labels are 0 or 1
         for (int i = 0; i < labels.length; i++) {
@@ -172,7 +176,8 @@ public class WeakLearner {
             throw new IllegalArgumentException("sample is null");
         }
         if (sample.length != k) {
-            throw new IllegalArgumentException("length of sample array needs to equal " + k);
+            throw new IllegalArgumentException(
+                    "length of sample array needs to equal " + k);
         }
         if (signPredict == 1) {
             if (sample[dimPredict] <= valPredict) {
