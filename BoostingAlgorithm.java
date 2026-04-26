@@ -23,7 +23,7 @@ public class BoostingAlgorithm {
     public BoostingAlgorithm(int[][] input, int[] labels, Point2D[] locations, int k) {
         validateBoost(input, labels, locations, k);
         dim = input.length;
-        this.input = input;
+        this.input = input.clone();
         this.labels = labels;
         numIterations = 0;
         // initialize all weights to 1/n
@@ -61,10 +61,10 @@ public class BoostingAlgorithm {
         if (k < 1 || k > inputs[0].length) {
             throw new IllegalArgumentException("k is out of range");
         }
-        // for an n by k input, the weights array is of length n
-        if (locations.length != inputs.length) {
+        // for an n by k input, the locations array is of length m
+        if (locations.length != inputs[0].length) {
             throw new IllegalArgumentException(
-                    "length of weights and input do not match");
+                    "length of locations and input do not match");
         }
         // for an n by k input, the labels array is of length n
         if (label.length != inputs.length) {
@@ -92,9 +92,14 @@ public class BoostingAlgorithm {
         numIterations++;
         // create weak learner
         weakLearner = new WeakLearner(input, weights, labels);
+        // get prediction
+        int prediction = weakLearner.predict(labels);
         // double weights of mislabeled inputs
         for (int i = 0; i < dim; i++) {
-            // TO DO
+            if (labels[i] != prediction) {
+                weightsSum += weights[i];
+                weights[i] *= 2;
+            }
         }
         // renormalize
         for (int i = 0; i < dim; i++) {
@@ -115,14 +120,18 @@ public class BoostingAlgorithm {
 
         // call Clustering.reduceDimensions() once
         clustering.reduceDimensions(sample);
+
+        int numZeros = 0;
+        int numOnes = 0;
         // call WeakLearner.predict() numIterations times
         for (int i = 0; i < numIterations; i++) {
-            weakLearner.predict(sample);
+            if (weakLearner.predict(sample) == 0) numZeros++;
+            else numOnes++;
         }
 
         // return majority-vote prediction
-        // TO DO
-        return -1;
+        if (numZeros >= numOnes) return 0;
+        return 1;
     }
 
     // unit testing
