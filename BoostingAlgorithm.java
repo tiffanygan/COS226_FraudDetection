@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class BoostingAlgorithm {
     // uncompressed dimension
     private int m;
+    // length of inputs
+    private int n;
     // weights (length n)
     private double[] weights;
     // sum of weights (should be 1 after normalization)
@@ -22,19 +24,23 @@ public class BoostingAlgorithm {
     // create the clusters and initialize your data structures
     public BoostingAlgorithm(int[][] input, int[] labels, Point2D[] locations, int k) {
         validateBoost(input, labels, locations, k);
+
         // uncompressed dimension
         m = input[0].length;
+        this.n = input.length;
+        this.labels = labels.clone();
+        weakLearners = new ArrayList<WeakLearner>();
+
         clustering = new Clustering(locations, k);
         // compress input to a nxk array
-        this.input = new int[input.length][k];
-        for (int i = 0; i < input.length; i++) {
+        this.input = new int[n][k];
+        for (int i = 0; i < n; i++) {
             this.input[i] = clustering.reduceDimensions(input[i]);
         }
-        this.labels = labels.clone();
+
         // initialize all weights to 1/n
-        weights = new double[input.length];
-        for (int i = 0; i < input.length; i++) weights[i] = (double) 1 / input.length;
-        weakLearners = new ArrayList<WeakLearner>();
+        weights = new double[n];
+        for (int i = 0; i < n; i++) weights[i] = (double) 1 / n;
     }
 
     // validate constructor parameters
@@ -86,9 +92,9 @@ public class BoostingAlgorithm {
 
     // return the current weight of the ith point
     public double weightOf(int i) {
-        if (i < 0 || i >= input.length) {
+        if (i < 0 || i >= n) {
             throw new IllegalArgumentException(
-                    "i needs to be from 0 to " + (input.length - 1));
+                    "i needs to be from 0 to " + (n - 1));
         }
         return weights[i];
     }
@@ -99,7 +105,7 @@ public class BoostingAlgorithm {
         WeakLearner weakLearner = new WeakLearner(input, weights, labels);
 
         // train model
-        for (int i = 0; i < weights.length; i++) {
+        for (int i = 0; i < n; i++) {
             // get prediction
             int prediction = weakLearner.predict(input[i]);
 
@@ -111,7 +117,7 @@ public class BoostingAlgorithm {
         }
 
         // renormalize
-        for (int i = 0; i < weights.length; i++) {
+        for (int i = 0; i < n; i++) {
             weights[i] /= weightsSum;
         }
         weightsSum = 1;
