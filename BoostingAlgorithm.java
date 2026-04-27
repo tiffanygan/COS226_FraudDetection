@@ -142,6 +142,7 @@ public class BoostingAlgorithm {
         }
 
         // return majority-vote prediction
+        // in case of tie, return 0
         if (numZeros >= numOnes) return 0;
         return 1;
     }
