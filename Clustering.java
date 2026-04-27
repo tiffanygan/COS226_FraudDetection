@@ -84,7 +84,7 @@ public class Clustering {
         In file = new In(fileName);
         int m = Integer.parseInt(file.readLine());
         Point2D[] locations = new Point2D[m];
-        String[] currCoord = new String[2];
+        String[] currCoord;
         int idx = 0;
         String curr;
         while (file.hasNextLine()) {
@@ -96,7 +96,10 @@ public class Clustering {
             idx++;
         }
         Clustering clustering = new Clustering(locations, 5);
-        int[] weights = { 5, 6, 7, 0, 6, 7, 5, 6, 7, 0, 6, 7, 0, 6, 7, 0, 6, 7, 0, 6, 7 };
+        int[] weights = {
+                5, 6, 7, 0, 6, 7, 5, 6, 7, 0,
+                6, 7, 0, 6, 7, 0, 6, 7, 0, 6, 7
+        };
         int[] clusters = clustering.reduceDimensions(weights);
         for (int c : clusters) {
             System.out.println(c);

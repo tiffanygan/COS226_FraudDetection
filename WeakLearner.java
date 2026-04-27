@@ -160,10 +160,10 @@ public class WeakLearner {
 
     private static class FirstElementOrder implements Comparator<double[]> {
         public int compare(double[] a, double[] b) {
-            if (a[0] > b[0]) {
+            // use Double.compare for accuracy
+            if (Double.compare(a[0], b[0]) > 0)
                 return 1;
-            }
-            else if (a[0] < b[0]) {
+            else if (Double.compare(a[0], b[0]) < 0) {
                 return -1;
             }
             return 0;

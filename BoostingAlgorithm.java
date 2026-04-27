@@ -32,7 +32,7 @@ public class BoostingAlgorithm {
         for (int i = 0; i < input.length; i++) {
             this.input[i] = clustering.reduceDimensions(input[i]);
         }
-        this.labels = labels;
+        this.labels = labels.clone();
         // initialize all weights to 1/n
         weights = new double[input.length];
         for (int i = 0; i < input.length; i++) weights[i] = (double) 1 / dim;
@@ -41,46 +41,46 @@ public class BoostingAlgorithm {
 
     // validate constructor parameters
     private void validateBoost(
-            int[][] input, int[] labels, Point2D[] locations, int k) {
+            int[][] inputCheck, int[] labelsCheck, Point2D[] locations, int k) {
         // make sure none of the inputs are null
-        if (input == null) {
+        if (inputCheck == null) {
             throw new IllegalArgumentException("input array is null");
         }
         if (locations == null) {
             throw new IllegalArgumentException("weights array is null");
         }
-        if (labels == null) {
+        if (labelsCheck == null) {
             throw new IllegalArgumentException("labels array is null");
         }
         // length of input can't be 0
-        if (input.length == 0) {
+        if (inputCheck.length == 0) {
             throw new IllegalArgumentException("length of input cannot be 0");
         }
         // no element in input can have length 0
-        for (int i = 0; i < input.length; i++) {
-            if (input[i].length == 0) {
+        for (int i = 0; i < inputCheck.length; i++) {
+            if (inputCheck[i].length == 0) {
                 throw new IllegalArgumentException(
                         "length of input arrays cannot be 0");
             }
         }
         // k has to be in the range [1, m]
         // inputs is n by m
-        if (k < 1 || k > input[0].length) {
+        if (k < 1 || k > inputCheck[0].length) {
             throw new IllegalArgumentException("k is out of range");
         }
         // for an n by k input, the locations array is of length m
-        if (locations.length != input[0].length) {
+        if (locations.length != inputCheck[0].length) {
             throw new IllegalArgumentException(
                     "length of locations and input do not match");
         }
         // for an n by k input, the labels array is of length n
-        if (labels.length != input.length) {
+        if (labelsCheck.length != inputCheck.length) {
             throw new IllegalArgumentException(
                     "length of labels and input do not match");
         }
         // value of labels are 0 or 1
-        for (int i = 0; i < labels.length; i++) {
-            if (!(labels[i] == 0 || labels[i] == 1)) {
+        for (int i = 0; i < labelsCheck.length; i++) {
+            if (!(labelsCheck[i] == 0 || labelsCheck[i] == 1)) {
                 throw new IllegalArgumentException("label must be either 1 or 0");
             }
         }
@@ -116,7 +116,7 @@ public class BoostingAlgorithm {
             weights[j] /= weightsSum;
         }
         weightsSum = 1;
-        
+
         weakLearners.add(weakLearner);
     }
 
