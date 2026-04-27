@@ -100,20 +100,20 @@ public class BoostingAlgorithm {
         WeakLearner weakLearner = new WeakLearner(input, weights, labels);
 
         // train model
-        for (int j = 0; j < weights.length; j++) {
+        for (int i = 0; i < weights.length; i++) {
             // get prediction
-            int prediction = weakLearner.predict(input[j]);
+            int prediction = weakLearner.predict(input[i]);
 
             // double weights of mislabeled inputs
-            if (labels[j] != prediction) {
-                weightsSum += weights[j];
-                weights[j] *= 2;
+            if (labels[i] != prediction) {
+                weightsSum += weights[i];
+                weights[i] *= 2;
             }
         }
 
         // renormalize
-        for (int j = 0; j < weights.length; j++) {
-            weights[j] /= weightsSum;
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] /= weightsSum;
         }
         weightsSum = 1;
 

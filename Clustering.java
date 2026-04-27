@@ -67,6 +67,13 @@ public class Clustering {
 
     // use the clusters to reduce the dimensions of an input
     public int[] reduceDimensions(int[] input) {
+        // validate input
+        if (input == null) {
+            throw new IllegalArgumentException("Input can't be null");
+        }
+        if (input.length != m) {
+            throw new IllegalArgumentException("Input dimension should be " + m);
+        }
         int[] newTransactions = new int[k];
         int index;
         for (int i = 0; i < m; i++) {
