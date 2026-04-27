@@ -4,8 +4,6 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.ArrayList;
 
 public class BoostingAlgorithm {
-    // number of locations (compressed k)
-    private int dim;
     // uncompressed dimension
     private int m;
     // weights (length n)
@@ -24,11 +22,11 @@ public class BoostingAlgorithm {
     // create the clusters and initialize your data structures
     public BoostingAlgorithm(int[][] input, int[] labels, Point2D[] locations, int k) {
         validateBoost(input, labels, locations, k);
-        dim = k;
+        // uncompressed dimension
         m = input[0].length;
         clustering = new Clustering(locations, k);
         // compress input to a nxk array
-        this.input = new int[input.length][dim];
+        this.input = new int[input.length][k];
         for (int i = 0; i < input.length; i++) {
             this.input[i] = clustering.reduceDimensions(input[i]);
         }
