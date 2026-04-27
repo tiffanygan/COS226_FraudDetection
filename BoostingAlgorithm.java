@@ -35,7 +35,7 @@ public class BoostingAlgorithm {
         this.labels = labels.clone();
         // initialize all weights to 1/n
         weights = new double[input.length];
-        for (int i = 0; i < input.length; i++) weights[i] = (double) 1 / dim;
+        for (int i = 0; i < input.length; i++) weights[i] = (double) 1 / input.length;
         weakLearners = new ArrayList<WeakLearner>();
     }
 
@@ -89,7 +89,8 @@ public class BoostingAlgorithm {
     // return the current weight of the ith point
     public double weightOf(int i) {
         if (i < 0 || i >= input.length) {
-            throw new IllegalArgumentException("i needs to be from 0 to " + (input.length - 1));
+            throw new IllegalArgumentException(
+                    "i needs to be from 0 to " + (input.length - 1));
         }
         return weights[i];
     }
