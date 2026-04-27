@@ -8,11 +8,11 @@ public class BoostingAlgorithm {
     private int dim;
     // uncompressed dimension
     private int m;
-    // weights
+    // weights (length n)
     private double[] weights;
     // sum of weights (should be 1 after normalization)
     private double weightsSum = 1;
-    // compressed input
+    // compressed input nxk
     private int[][] input;
     // labels
     private int[] labels;
@@ -88,8 +88,8 @@ public class BoostingAlgorithm {
 
     // return the current weight of the ith point
     public double weightOf(int i) {
-        if (i < 0 || i > dim - 1) {
-            throw new IllegalArgumentException("i needs to be from 0 to " + (dim - 1));
+        if (i < 0 || i >= input.length) {
+            throw new IllegalArgumentException("i needs to be from 0 to " + (input.length - 1));
         }
         return weights[i];
     }
