@@ -23,8 +23,7 @@ Programming Assignment 7:  Fraud Detection
  *
  ******************************************************************************/
 
-[list the help received here]
-
+None
 
 /******************************************************************************
  *  Write and sign the following student acknowledgment of original work.
@@ -35,6 +34,9 @@ Programming Assignment 7:  Fraud Detection
  *      with University regulations.  /s/ Ada Lovelace
  ******************************************************************************/
 
-[write and sign the pledge here]
+This programming assignment represents my own work in accordance with
+University regulations.  /s/ Anna Lau
 
+This programming assignment represents my own work in accordance with
+University regulations.  /s/ Tiffany Gan
 

@@ -8,7 +8,7 @@ Answer these questions after you implement your solution.
  * What is your assessment of the assignment? Was it helpful? Was it fun?
  * Give it a grade from 1 (bad) to 5 (good)
  **************************************************************************** */
-
+4
 
 
 /* *****************************************************************************
@@ -16,11 +16,12 @@ Answer these questions after you implement your solution.
  * banned, it's only discouraged, so we won't penalize you in any way for
  * any kind of AI usage.
  **************************************************************************** */
-
+None used
 
 
 /* *****************************************************************************
- *  List any other comments here. Feel free to provide any feedback   
- *  on how much you learned from doing the assignment, and whether    
- *  you enjoyed doing it.                                             
+ *  List any other comments here. Feel free to provide any feedback
+ *  on how much you learned from doing the assignment, and whether
+ *  you enjoyed doing it.
  **************************************************************************** */
+This assignment was informative, and we learned a lot
