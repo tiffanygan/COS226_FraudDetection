@@ -10,8 +10,6 @@ public class BoostingAlgorithm {
     private int n;
     // weights (length n)
     private double[] weights;
-    // sum of weights (should be 1 after normalization)
-    private double weightsSum = 1;
     // compressed input nxk
     private int[][] input;
     // labels
@@ -103,7 +101,7 @@ public class BoostingAlgorithm {
     public void iterate() {
         // create weak learner
         WeakLearner weakLearner = new WeakLearner(input, weights, labels);
-
+        double weightsSum = 0;
         // train model
         for (int i = 0; i < n; i++) {
             // get prediction
@@ -111,16 +109,15 @@ public class BoostingAlgorithm {
 
             // double weights of mislabeled inputs
             if (labels[i] != prediction) {
-                weightsSum += weights[i];
                 weights[i] *= 2;
             }
+            weightsSum += weights[i];
         }
 
         // renormalize
         for (int i = 0; i < n; i++) {
             weights[i] /= weightsSum;
         }
-        weightsSum = 1;
 
         weakLearners.add(weakLearner);
     }
